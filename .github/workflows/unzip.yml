@@ -7,25 +7,27 @@ jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - name: تحميل المستودع
+      - name: التحقق من المستودع
         uses: actions/checkout@v4
-        
+
+      - name: فحص وجود الملف
+        run: |
+          ls -la
+          if [ ! -f hotspot5G-redlimited.zip ]; then
+            echo "❌ الملف المضغوط غير موجود"
+            exit 1
+          fi
+
       - name: فك الضغط
         run: |
-          # إنشاء مجلد للاستخراج
-          mkdir ملفات_مستخرجة
-          
-          # فك الضغط (وضع صامت)
-          unzip -q hotspot5G-redlimited.zip -d ملفات_مستخرجة/
-          
-          # نقل المحتويات للمجلد الرئيسي
-          mv ملفات_مستخرجة/* .
-          
-          # التنظيف
-          rm -rf hotspot5G-redlimited.zip ملفات_مستخرجة
-          
+          unzip -o hotspot5G-redlimited.zip -d unzipped/
+          ls -la unzipped/
+          mv unzipped/* .
+          rm -rf hotspot5G-redlimited.zip unzipped
+          echo "✅ تم فك الضغط بنجاح"
+
       - name: حفظ التغييرات
         uses: EndBug/add-and-commit@v9
         with:
-          message: "تم فك الضغط تلقائياً"
+          message: "تم فك الضغط تلقائياً - ${{ github.sha }}"
           add: "."
