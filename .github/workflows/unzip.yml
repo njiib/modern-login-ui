@@ -1,4 +1,4 @@
-name: Auto-Unzip
+name: فك الضغط التلقائي
 on:
   push:
     paths:
@@ -7,18 +7,25 @@ jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: تحميل المستودع
         uses: actions/checkout@v4
         
-      - name: Unzip file
+      - name: فك الضغط
         run: |
-          unzip -q hotspot5G-redlimited.zip -d unzipped/
-          rm -f hotspot5G-redlimited.zip
-          mv unzipped/* .
-          rm -rf unzipped
+          # إنشاء مجلد للاستخراج
+          mkdir ملفات_مستخرجة
           
-      - name: Commit changes
+          # فك الضغط (وضع صامت)
+          unzip -q hotspot5G-redlimited.zip -d ملفات_مستخرجة/
+          
+          # نقل المحتويات للمجلد الرئيسي
+          mv ملفات_مستخرجة/* .
+          
+          # التنظيف
+          rm -rf hotspot5G-redlimited.zip ملفات_مستخرجة
+          
+      - name: حفظ التغييرات
         uses: EndBug/add-and-commit@v9
         with:
-          message: "Auto-extracted: ${{ github.sha }}"
+          message: "تم فك الضغط تلقائياً"
           add: "."
