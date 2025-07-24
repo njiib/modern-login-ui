@@ -1,4 +1,4 @@
-name: Unzip Files
+name: Auto-Unzip
 on:
   push:
     paths:
@@ -7,12 +7,18 @@ jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          unzip hotspot5G-redlimited.zip -d unzipped/
-          rm hotspot5G-redlimited.zip
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Unzip file
+        run: |
+          unzip -q hotspot5G-redlimited.zip -d unzipped/
+          rm -f hotspot5G-redlimited.zip
           mv unzipped/* .
-          rm -r unzipped
-      - uses: EndBug/add-and-commit@v9
+          rm -rf unzipped
+          
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
         with:
-          message: "Auto-extracted ZIP"
+          message: "Auto-extracted: ${{ github.sha }}"
+          add: "."
