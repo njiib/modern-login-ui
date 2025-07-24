@@ -1,33 +1,27 @@
-name: فك الضغط التلقائي
+name: Unzip hotspot5G-redlimited.zip
+
 on:
   push:
     paths:
-      - 'hotspot5G-redlimited.zip'
+      - '.github/workflows/hotspot5G-redlimited.zip'
+
 jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - name: التحقق من المستودع
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: فحص وجود الملف
+      - name: Unzip hotspot5G-redlimited.zip
         run: |
-          ls -la
-          if [ ! -f hotspot5G-redlimited.zip ]; then
-            echo "❌ الملف المضغوط غير موجود"
-            exit 1
-          fi
+          unzip -o .github/workflows/hotspot5G-redlimited.zip -d .github/workflows/hotspot5G-redlimited
 
-      - name: فك الضغط
+      - name: Commit unzipped files
         run: |
-          unzip -o hotspot5G-redlimited.zip -d unzipped/
-          ls -la unzipped/
-          mv unzipped/* .
-          rm -rf hotspot5G-redlimited.zip unzipped
-          echo "✅ تم فك الضغط بنجاح"
-
-      - name: حفظ التغييرات
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "تم فك الضغط تلقائياً - ${{ github.sha }}"
-          add: "."
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .github/workflows/hotspot5G-redlimited/
+          git commit -m "Unzipped hotspot5G-redlimited.zip automatically"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
